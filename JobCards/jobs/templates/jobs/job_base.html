@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load job_extras %}
+{% block content %}
+<div class="jobss-page">
+    <div class="container">
+        <div >
+            {% block prejob %} {% endblock %}
+            {% block job_content %} {% endblock %}
+            {% block post_job %} {% endblock %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

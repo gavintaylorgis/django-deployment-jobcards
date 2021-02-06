@@ -1,0 +1,16 @@
+{% extends 'jobs/job_base.html' %}
+
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+{{ form.media }}
+
+{% block content %}
+<h1>Enter Jobcode</h1>
+<form action="" method="Post" class="post-form">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <button type="submit" class="btn btn-primary btn-comment">Submit</button>
+</form>
+
+{% endblock %}

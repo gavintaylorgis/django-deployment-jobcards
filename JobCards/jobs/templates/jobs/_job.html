@@ -1,0 +1,23 @@
+<div class="job media">
+    <h3>{{job.job_descrip}}</h3>
+    <div class="media-body">
+        <strong>{{job.user.username}}</strong>
+        <h5 class="media-heading">
+        <span class="username">
+            <a href="{% url 'jobs:for_user' username=job.requisitioner.username %}">@{{job.requisitioner.username}}</a>
+        </span>
+        <time class="time">
+            <a href="{% url 'jobs:single' username=job.requisitioner.username pk=job.pk %}">{{job.created_at}}</a>
+
+        </time>
+        </h5>
+        <div class="media-footer">
+            {% if user.is_authenticated and job.user == user %}
+                <a href="{% url 'jobs:delete' pk=job.pk %}" title="delete" class="btn btn-simple">
+                    <span class="glyphicon glyphicon-remove text-danger" aria-hidden='true'></span>
+                    <span class="text-danger icon-label">Delete</span>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>

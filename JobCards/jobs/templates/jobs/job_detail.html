@@ -1,0 +1,20 @@
+
+
+
+{% extends 'jobs/job_base.html' %}
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+{{ form.media }}
+
+
+{% block content %}
+<h4>Create New Jobcard</h4>
+<form  method="POST" id="jobDetails">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    {% buttons %}
+    <a class="btn btn-primary" href="{% url 'jobs:all' %}" role="button">Back</a>
+    {% endbuttons %}
+</form>
+{% endblock %}

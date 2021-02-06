@@ -1,0 +1,155 @@
+
+{% extends 'jobs/job_base.html' %}
+
+{% load job_extras %}
+
+{% block job_content %}
+
+<div class="table-responsive" style="height: 100%;" >
+    <table class="table table-responsive table-striped table-sm table-bordered table-hover" style="max-height: 750px; margin-bottom: 0;">
+        <thead class="thead-light">
+            
+            <th scope="col" class="text-center" style="min-width: 60px;">Job ID</th>
+            <th scope="col" class="text-center">Requisitioner</th>
+            <!--<th>Created Date/Time</th>-->
+            <th scope="col" class="text-center">Asset</th>
+            <th scope="col" class="text-center" style="min-width: 100px;">Asset Type</th>
+            <th scope="col" class="text-center">Priority</th>
+            <th scope="col" class="text-center" style="min-width: 120px;">Completed By</th>
+            <th scope="col" class="text-center" style="min-width: 200px;">Contractor</th>
+            <th scope="col" class="text-center">Status
+                <select id='filterText' style='display:inline-block' onchange='filterText()'>
+                    <option disabled selected>Select</option>
+                    <option value='Requested'>Requested</option>
+                    <option value='Approved'>Approved</option>
+                    <option value='Rework'>Rework</option>
+                    <option value='Rejected'>Rejected</option>
+                    <option value='Accepted'>Accepted</option>
+                    <option value='Declined'>Declined</option>
+                    <option value='Request Closeout'>Request Closeout</option>
+                    <option value='Closeout'>Closeout</option>
+                    <option value='all'>All</option>
+                </select>
+            </th>
+            <th scope="col" class="text-center" style="min-width: 300px;">Job Description</th>
+            <th scope="col" class="text-center" style="min-width: 150px;">Approver</th>
+            <th scope="col" class="text-center" style="min-width: 200px;">Actions</th>
+            
+        </thead>
+
+        <tbody id="myTable">
+            
+            {% for job in job_list %}
+            {% if job.status.status_name != "Closed" and job.status.status_name != "Rejected" and job.status.status_name != "Declined"%}
+                <tr class="content">
+                    <td>
+                        <a href="{% url 'jobs:selected_job_details' pk=job.pk %}">#{{job.pk}}</a>
+                    </td>
+                    <td>{{job.requisitioner|title}}</td>
+                    <!--<td>{{job.created_at|date:"d M Y"}}</td>-->
+                    <td>{{job.asset.asset_name}}</td>
+                    <td>{{job.asset.asset_type.asset_type_name}}</td>
+                    <td>{{job.priority.priority_name}}</td>
+                    <td>{{job.request_completed_by_date|date:"d M Y"}}</td>
+                    <td>{{job.contractor_group}}</td>
+                    <td>{{job.status.status_name}}</td>
+                    <td>{{job.job_descrip|truncatechars:140}}</td>
+                    <td>{{job.approver.approver_name}}</td>
+
+                    <td>
+                        <!--Requestor Update/Rework --> 
+                        {% if user.username == job.requisitioner.username and job.status.status_name == "Requested"  %}
+                        <a href="{% url 'jobs:update' pk=job.pk %}" title="Update" class="btn btn-simple">
+                            <i class="fa fa-edit"></i>Update
+                        </a>
+                        {% endif %}
+
+                        <!--Requestor Rework --> 
+                        {% if user.username == job.requisitioner.username and job.status.status_name == "Rework"  %}
+                        <a href="{% url 'jobs:update' pk=job.pk %}" title="Update" class="btn btn-simple">
+                            <i class="fa fa-edit"></i>Update
+                        </a>
+                        {% endif %}
+
+                        <!--Delete Jobcard (only deletable before approval)-->
+                        {% if user.username == job.requisitioner.username and job.status.status_name == "Requested" %}
+                        <a href="{% url 'jobs:delete' pk=job.pk %}" title="Delete" class="btn btn-simple">
+                            <i class="fa fa-trash"  style="color:red; font-size: 1.5em;"></i> Delete
+                        </a>
+                        {% endif %}
+
+
+                        <!-- Approval  Approve/Reject-->
+                        {% if request.user|has_group:"approver"  and job.status.status_name == "Requested"  %}
+                        <a href="{% url 'jobs:job_approve' pk=job.pk %}" title="Approve" class="btn btn-simple">
+                            <i class="fa fa-thumbs-up"  style="color:rgb(3, 122, 39); font-size: 1.5em;"></i> Approve Job
+                        </a>
+                        
+                        <a href="{% url 'jobs:job_rework' pk=job.pk %}" title="Rework" class="btn btn-simple">
+                            <i class="fas fa-undo-alt"  style="color:rgb(255, 174, 0); font-size: 1.5em;"></i> Rework Job
+                        </a>
+
+                        <a href="{% url 'jobs:job_reject' pk=job.pk %}" title="Reject" class="btn btn-simple">
+                            <i class="fa fa-thumbs-down"  style="color:rgb(255, 6, 6); font-size: 1.5em;"></i> Reject Job
+                        </a>
+                        
+                        {% endif %}
+
+                        <!--Contractor Accept/Reject-->
+
+                        {% if request.user|has_group:"contractor" and job.status.status_name == "Approved"   and request.user|has_group:job.contractor_group %}
+                        <a href="{% url 'jobs:job_accept' pk=job.pk %}" title="Accepted" class="btn btn-simple">
+                            <i class="fa fa-thumbs-up"  style="color:rgb(3, 122, 39); font-size: 1.5em;"></i> Accept Job
+                        </a>
+                        <a href="{% url 'jobs:job_decline' pk=job.pk %}" title="Declined" class="btn btn-simple">
+                            <i class="fa fa-thumbs-down"  style="color:rgb(255, 174, 0); font-size: 1.5em;"></i> Decline Job
+                        </a>
+                        {% endif %}
+
+                        {% if request.user|has_group:"contractor" and job.status.status_name == "Accepted"   and request.user|has_group:job.contractor_group %}
+                        <a href="{% url 'jobs:job_addjobcode' pk=job.pk %}" title="Enter Invoice Code" class="btn btn-simple">
+                            <i class="fas fa-qrcode"  style="color:rgb(5, 29, 252); font-size: 1.5em;"></i> Enter Jobcode
+                        </a>
+                        <a href="{% url 'jobs:job_requestcloseout' pk=job.pk %}" title="Delete" class="btn btn-simple">
+                            <i class="fas fa-check"  style="color:rgb(3, 122, 39); font-size: 1.5em;"></i> Request Closeout
+                        </a>
+                        {% endif %}
+                        
+                        {% if user.username == job.requisitioner.username and job.status.status_name == "Request Closeout" %}
+                        <a href="{% url 'jobs:job_closeout' pk=job.pk %}" title="Close Out" class="btn btn-simple">
+                            <i class="fas fa-check-double" style="color: rgb(3, 122, 39);font-size: 1.5em;"></i> Close Out
+                        </a> 
+                        {% endif %}
+                        
+                    </td>
+                    
+                </tr>
+            {% endif %}
+            {% endfor%}
+
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<script>
+    function filterText()
+        {  
+            var rex = new RegExp($('#filterText').val());
+            if(rex =="/all/"){clearFilter()}else{
+                $('.content').hide();
+                $('.content').filter(function() {
+                return rex.test($(this).text());
+                }).show();
+        }
+        }
+        
+    function clearFilter()
+        {
+            $('.filterText').val('');
+            $('.content').show();
+        }
+    </script>
+{% endblock %}

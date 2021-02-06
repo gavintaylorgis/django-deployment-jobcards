@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+{% load static %}
+{% load job_extras %}
+<html>
+    <head>
+        <meta charset="utf-8">
+    
+        <title>KSC Jobcards</title>
+            <!-- Latest compiled and minified CSS -->
+
+        
+        <!-- Latest compiled and minified JavaScript -->
+        <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        -->
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+        <link rel="shortcut icon" href="{% static 'images/favicon.ico' type='image/x-icon' %}">
+        {% load bootstrap4 %}
+        {% bootstrap_css %}
+        {% bootstrap_javascript jquery='full' %}
+        {{ form.media }}
+      </head>
+    <body>
+        <div id="app" class="container">
+            <nav class="navbar navbar-expand-md navbar-light bg-light">
+                <a class="navbar-brand" href="{% url 'home'  %}"><span><img src="{% static 'ksc_logo.jpg' %}" height="30px" alt=""></span>KSC Jobcards</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mr-auto">
+                        {% if request.user|has_group:"requisitioner"  and user.is_authenticated %}
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{% url 'jobs:create' %}">Create Job</a>
+                        </li>
+                        {% endif %}
+                        {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'jobs:all' %}">View Active Jobs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'jobs:inactive' %}">View Inactive Jobs</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    
+
+
+                    <ul class="navbar-nav">
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'accounts:logout' %}">Logout: {{user.username|title}}</a>
+                            </li>
+                        {% else%}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
+                            </li>
+                        {% comment %}    
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'accounts:signup' %}">Sign Up</a>
+                            </li>
+                        {% endcomment %}    
+                        {% endif %}
+                        
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+
+
+<!--
+            <nav class="navbar mynav" role="navigation" id='navbar'>
+            <div class='container'>
+                <a class='navbar-brand mynav' href="{% url 'home'  %}"><span><img src="{% static 'ksc_logo.jpg' %}" height="30px" alt=""></span>KSC Jobcards</a>
+                <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                    {% if request.user|has_group:"requisitioner" %}
+                    <li><a href="{% url 'jobs:create' %}">Create Jobcard</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'jobs:all' %}">View Jobcards</a></li>
+                    
+                    <li><a href="{% url 'accounts:logout' %}">Logout:{{user.username}}</a></li>
+                {% else %}
+                <li><a href="{% url 'accounts:login' %}">Login</a></li>
+                <li><a href="{% url 'accounts:signup' %}">Sign Up</a></li>
+
+                {% endif %}
+            </ul>
+            </div>
+            </nav>
+-->
+            
+            <div class='container mycontent'>
+            {% block content %}
+            
+            {% endblock %}
+            </div>
+
+    </body>
+</html>

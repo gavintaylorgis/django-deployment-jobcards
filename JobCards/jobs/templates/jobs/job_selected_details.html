@@ -1,0 +1,158 @@
+{% extends 'jobs/job_base.html' %}
+
+{% block content %}
+<div class="jumbotron">
+
+<h2>Job Details: </h2>
+
+<table class="table table-responsive table-striped table-sm table-bordered table-hover" style="background-color: white; padding:inherit;">
+    <thead class="thead-light">
+        <th scope="col" class="text-center" style="min-width: 150px;">Item</th>
+        <th scope="col" class="text-center" style="min-width: 300px;">Details</th>
+    </thead>  
+    <tbody>
+        <tr>
+            <th scope="row">Job ID</th>
+            <td>#{{sel_job.pk}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Requisitioner</th>
+            <td>{{sel_job.requisitioner.username|title}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Created Date/Time</th>
+            <td>{{sel_job.created_at|date:"d M Y"}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Priority</th>
+            <td>{{sel_job.priority.priority_name}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Work Location</th>
+            <td>{{sel_job.asset.asset_name}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Location Type</th>
+            <td>{{sel_job.asset.asset_type.asset_type_name}}</td>
+        </tr>
+        <tr>
+            <th scope="row">To Be Completed By</th>
+            <td>{{sel_job.request_completed_by_date|date:"d M Y"}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Contractor Group</th>
+            <td>{{sel_job.contractor_group}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Current Status</th>
+            <td>{{sel_job.status.status_name}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Job Type</th>
+            <td>{{sel_job.job_type}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Job Details</th>
+            <td>{{sel_job.job_descrip}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Job Invoice Number</th>
+            <td>{{sel_job.jobcard_number}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Job Closed</th>
+            <td>{{sel_job.job_closed}}</td>
+        </tr>
+
+
+    </tbody>
+
+</table>
+</div>
+
+{% comment %}
+    <form method="POST" class="post-form">{% csrf_token %}
+        {% bootstrap_form form %}
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+
+{% endcomment%}
+<a class="btn btn-primary btn-comment" href="{% url 'jobs:add_comment_to_job' pk=sel_job.pk %}">Add Comment</a>
+
+
+
+<br>
+
+
+
+
+
+{% for comment in sel_job.comments.all %}
+<br>
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <div class="card card-white post">
+                <div class="post-heading">
+                    {% comment %}
+                    <div class="float-left image">
+
+                        <img src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image">
+                    </div>
+                    {% endcomment %}
+                    <div class="float-left meta">
+                        <div class="title h5">
+                            <a href="#"><b>Comment by: {{comment.commentor.username|title}}</b></a>
+                        </div>
+                        <h6 class="text-muted time">{{comment.created_at}}</h6>
+                    </div>
+                </div> 
+                <div class="post-description" style="margin-left: 10px;"> 
+                    <p >{{comment.comment_details|safe|linebreaks}}</p>
+
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+{% empty %}
+
+No Comments Yet
+
+{% endfor %}
+
+{% comment %}
+
+
+
+
+
+
+
+<div class="container">
+    {% for comment in sel_job.comments.all %}
+    <br>
+  
+    {{ comment.created_at }}
+    
+    <p>{{comment.comment_details|safe|linebreaks}}</p>
+    <p>Posted by: {{comment.commentor.username|title}}</p>
+    
+    {% empty %}
+    <p>No Comment</p>
+    {% endfor%}
+
+</div>
+
+
+{% endcomment %}
+
+
+    {% endblock %}
+
+
+    
+
+
