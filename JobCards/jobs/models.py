@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 User = get_user_model()
 # Create your models here.
 GROUP_CHOICES = [ [g.name, g.name] for g in Group.objects.exclude(name='contractor').exclude(name='requisitioner').exclude(name='approver') ]
-print(GROUP_CHOICES)
+#print(GROUP_CHOICES)
 
 class Status(models.Model):
     status_name = models.CharField(max_length=200,default='Hold')
@@ -80,9 +80,10 @@ class Job(models.Model):
     status = models.ForeignKey(Status,related_name='jobs',on_delete=models.CASCADE,default=Status.objects.get(status_name='Requested').pk)
     approver = models.ForeignKey(Approver,related_name='jobs',on_delete=models.CASCADE,default=1)
     job_type = models.ForeignKey(JobType,related_name='jobs',on_delete=models.CASCADE,null=True)
-    jobcard_number = models.CharField(max_length=150,default='')
+    jobcard_number = models.CharField('Invoice Number',max_length=150,default='')
     job_closed = models.BooleanField(default=False)
     contractor_group = models.CharField(max_length=200, choices=GROUP_CHOICES,default=4)
+    ack_cost_code = models.CharField('ACK/EDC Code',max_length=20, default='', null=True)
 
     
     def __str__(self):

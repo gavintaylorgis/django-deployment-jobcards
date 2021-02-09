@@ -17,6 +17,7 @@
             <th scope="col" class="text-center">Priority</th>
             <th scope="col" class="text-center" style="min-width: 120px;">Completed By</th>
             <th scope="col" class="text-center">Contractor</th>
+            <th scope="col" class="text-center">ACK/EDC Code</th>
             <th scope="col" class="text-center">Status
                 <select id='filterText' style='display:inline-block' onchange='filterText()'>
                     <option disabled selected>Select</option>
@@ -52,6 +53,7 @@
                     <td>{{job.priority.priority_name}}</td>
                     <td>{{job.request_completed_by_date|date:"d M Y"}}</td>
                     <td>{{job.conctractor.contractor_name}}</td>
+                    <td>{{job.ack_cost_code}}</td>
                     <td>{{job.status.status_name}}</td>
                     <td>{{job.job_descrip|truncatechars:140}}</td>
                     <td>{{job.approver.approver_name}}</td>

@@ -3,7 +3,7 @@
 {% block content %}
 <div class="jumbotron">
 
-<h2>Job Details: </h2>
+<h4>Job Details: </h4>
 
 <table class="table table-responsive table-striped table-sm table-bordered table-hover" style="background-color: white; padding:inherit;">
     <thead class="thead-light">
@@ -54,6 +54,10 @@
         <tr>
             <th scope="row">Job Details</th>
             <td>{{sel_job.job_descrip}}</td>
+        </tr>
+        <tr>
+            <th scope="row">ACK/EDC Code</th>
+            <td>{{sel_job.ack_cost_code}}</td>
         </tr>
         <tr>
             <th scope="row">Job Invoice Number</th>

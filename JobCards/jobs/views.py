@@ -33,7 +33,7 @@ class ClosedJobsList(generic.ListView):
 
 class JobDetailView(generic.DetailView):
     model = models.Job
-    fields = ['asset','priority','request_completed_by_date','job_descrip','contractor_group','conctractor','status','approver','job_type','jobcard_number','job_closed']
+    fields = ['asset','priority','request_completed_by_date','job_descrip','contractor_group','conctractor','status','approver','job_type','jobcard_number','job_closed','ack_cost_code']
     template_name = 'jobs/job_detail.html'
 
 
@@ -68,12 +68,12 @@ class JobDetail(generic.DetailView):
 
 
 class CreateJob(LoginRequiredMixin,SelectRelatedMixin,generic.CreateView):
-    fields = ('asset','priority','request_completed_by_date','job_descrip','contractor_group','approver','job_type')
+    fields = ('asset','priority','request_completed_by_date','job_descrip','contractor_group','approver','job_type','ack_cost_code')
     model = models.Job
 
     def get_form(self):
          form = super().get_form()
-         form.fields['request_completed_by_date'].widget = DateTimePickerInput()
+         form.fields['request_completed_by_date'].widget = DateTimePickerInput(format='%Y-%m-%d %H:%M')
          return form
 
     def form_valid(self,form):
@@ -91,7 +91,7 @@ class DeleteJob(LoginRequiredMixin,generic.DeleteView):
 
 class UpdateJob(LoginRequiredMixin,generic.UpdateView):
     model = models.Job
-    fields = ['asset','priority','request_completed_by_date','job_descrip','contractor_group','status','approver','job_type']
+    fields = ['asset','priority','request_completed_by_date','job_descrip','contractor_group','status','approver','job_type','ack_cost_code']
     template_name_suffix = '_update_form'
     success_url =reverse_lazy('jobs:all')
 
@@ -238,7 +238,7 @@ def add_comment_to_job(request,pk):
             comment.commentor = request.user
             comment.save()
             email_subject = 'Do Not Reply !  Jobcard #{} Updated'.format(pk)
-            email_message = 'New comment added to job #{} by {}. Go to http://127.0.0.1:8000/jobs/job/{} to see any comments'.format(pk,request.user.username,pk)
+            email_message = 'New comment added to job #{} by {}. Go to http://127.0.0.1:8000/jobs/job/{} to see any additional comments. \r\n \r\n {}'.format(pk,request.user.username,pk,comment.comment_details)
             send_mail(
                 email_subject,
                 email_message,

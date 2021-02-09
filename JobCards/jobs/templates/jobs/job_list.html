@@ -17,6 +17,7 @@
             <th scope="col" class="text-center">Priority</th>
             <th scope="col" class="text-center" style="min-width: 120px;">Completed By</th>
             <th scope="col" class="text-center" style="min-width: 200px;">Contractor</th>
+            <th scope="col" class="text-center" style="min-width: 200px;">ACK/EDC Code</th>
             <th scope="col" class="text-center">Status
                 <select id='filterText' style='display:inline-block' onchange='filterText()'>
                     <option disabled selected>Select</option>
@@ -52,6 +53,7 @@
                     <td>{{job.priority.priority_name}}</td>
                     <td>{{job.request_completed_by_date|date:"d M Y"}}</td>
                     <td>{{job.contractor_group}}</td>
+                    <td>{{job.ack_cost_code}}</td>
                     <td>{{job.status.status_name}}</td>
                     <td>{{job.job_descrip|truncatechars:140}}</td>
                     <td>{{job.approver.approver_name}}</td>
@@ -108,7 +110,7 @@
 
                         {% if request.user|has_group:"contractor" and job.status.status_name == "Accepted"   and request.user|has_group:job.contractor_group %}
                         <a href="{% url 'jobs:job_addjobcode' pk=job.pk %}" title="Enter Invoice Code" class="btn btn-simple">
-                            <i class="fas fa-qrcode"  style="color:rgb(5, 29, 252); font-size: 1.5em;"></i> Enter Jobcode
+                            <i class="fas fa-qrcode"  style="color:rgb(5, 29, 252); font-size: 1.5em;"></i> Enter Invoice No.
                         </a>
                         <a href="{% url 'jobs:job_requestcloseout' pk=job.pk %}" title="Delete" class="btn btn-simple">
                             <i class="fas fa-check"  style="color:rgb(3, 122, 39); font-size: 1.5em;"></i> Request Closeout
